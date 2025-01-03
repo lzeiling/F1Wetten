@@ -85,7 +85,7 @@ function displayRaces(){
         label.setAttribute("for", race.number); // Verknüpfe Label mit der Input-ID
 
         const img = document.createElement("img");
-        img.src = "assets/graphics/flag-icons/" + race.country_imgPath + ".svg"; // Annahme: `race.flagIcon` enthält den Pfad zur Flaggen-Grafik des Rennens
+        img.src = "assets/graphics/flag-icons/" + race.country_imgPath.toLowerCase() + ".svg"; // Annahme: `race.flagIcon` enthält den Pfad zur Flaggen-Grafik des Rennens
         img.alt = race.location;     // Annahme: `race.name` beschreibt den Namen des Rennens
 
         label.appendChild(img);  // img zu einem Bestandteil des labels machen
