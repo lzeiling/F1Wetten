@@ -1,0 +1,86 @@
+{
+  "teams": [
+    {
+      "team": "Oracle Red Bull Racing",
+      "engine": "Honda RBPT",
+      "drivers": [
+        { "name": "Max Verstappen", "number": 1 },
+        { "name": "Liam Lawson", "number": 30 }
+      ]
+    },
+    {
+      "team": "McLaren Formula 1 Team",
+      "engine": "Mercedes",
+      "drivers": [
+        { "name": "Oscar Piastri", "number": 81 },
+        { "name": "Lando Norris", "number": 4 }
+      ]
+    },
+    {
+      "team": "Scuderia Ferrari HP",
+      "engine": "Ferrari",
+      "drivers": [
+        { "name": "Charles Leclerc", "number": 16 },
+        { "name": "Lewis Hamilton", "number": 44 }
+      ]
+    },
+    {
+      "team": "Mercedes-AMG PETRONAS Formula One Team",
+      "engine": "Mercedes",
+      "drivers": [
+        { "name": "George Russell", "number": 63 },
+        { "name": "Valtteri Bottas", "number": 77 },
+        { "name": "Andrea Kimi Antonelli", "number": 12 }
+      ]
+    },
+    {
+      "team": "Aston Martin Aramco Formula One Team",
+      "engine": "Mercedes",
+      "drivers": [
+        { "name": "Lance Stroll", "number": 18 },
+        { "name": "Fernando Alonso", "number": 14 }
+      ]
+    },
+    {
+      "team": "BWT Alpine F1 Team",
+      "engine": "Renault",
+      "drivers": [
+        { "name": "Pierre Gasly", "number": 10 },
+        { "name": "Paul Aron", "number": 7 },
+        { "name": "Jack Doohan", "number": 26 }
+      ]
+    },
+    {
+      "team": "MoneyGram Haas F1 Team",
+      "engine": "Ferrari",
+      "drivers": [
+        { "name": "Esteban Ocon", "number": 31 },
+        { "name": "Oliver Bearman", "number": 87 }
+      ]
+    },
+    {
+      "team": "Visa Cash App Racing Bulls Formula One Team",
+      "engine": "Honda RBPT",
+      "drivers": [
+        { "name": "Isack Hadjar", "number": 6 },
+        { "name": "Yuki Tsunoda", "number": 22 }
+      ]
+    },
+    {
+      "team": "Williams Racing",
+      "engine": "Mercedes",
+      "drivers": [
+        { "name": "Alexander Albon", "number": 23 },
+        { "name": "Carlos Sainz Jr.", "number": 55 }
+      ]
+    },
+    {
+      "team": "Stake F1 Team Kick Sauber",
+      "engine": "Ferrari",
+      "drivers": [
+        { "name": "Nico Hülkenberg", "number": 27 },
+        { "name": "Gabriel Bortoleto", "number": 5 }
+      ]
+    }
+  ]
+}

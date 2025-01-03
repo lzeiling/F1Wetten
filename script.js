@@ -1,10 +1,18 @@
 let chooseRaceDiv;
+let selectBetRaceWinner;
+let selectBetP10;
+let selectBetFirstDnf;
 let raceList = [];
+let driverList = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     loadRaceList();
+    loadDriverList();
 
     chooseRaceDiv = document.getElementById("chooseRaceDiv");
+    selectBetRaceWinner = document.getElementById("betRaceWinner");
+    selectBetP10 = document.getElementById("betP10");
+    selectBetFirstDnf = document.getElementById("betFirstDnf");
 });
 
 
@@ -23,6 +31,25 @@ function loadRaceList() {
             raceList=data;
             displayRaces();
             addRadioClickListeners();
+        })
+        .catch(error => {
+            console.error("Fehler beim Laden der raceList.json:", error);
+        });
+}
+
+function loadDriverList() {
+    fetch('assets/driverList.json') // Pfad zur Datei
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Driver list loaded:", data);
+            // Verarbeite hier die geladene Race-Liste
+            driverList=data;
+            fillDropdowns();
         })
         .catch(error => {
             console.error("Fehler beim Laden der raceList.json:", error);
@@ -68,6 +95,19 @@ function displayRaces(){
 
         chooseRaceDiv.appendChild(raceSelectionDiv);
     });
+}
+
+function fillDropdowns() {
+
+
+    driverList.teams.forEach(team => {
+        team.drivers.forEach(driver => {
+            console.log(driver.name);
+            selectBetRaceWinner.appendChild(new Option(driver.name + " " + driver.number, driver.number));
+            selectBetP10.appendChild(new Option(driver.name + " " + driver.number, driver.number));
+            selectBetFirstDnf.appendChild(new Option(driver.name + " " + driver.number, driver.number));
+        })
+    })
 }
 
 function addRadioClickListeners() {
