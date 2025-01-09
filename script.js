@@ -59,18 +59,7 @@ function loadDriverList() {
 function displayRaces(){
     raceList.races.forEach(race => {
         // Durch Objekt iterieren
-        /*
-        console.log(`Rennen Nummer: ${race.number}`);
-        console.log(`Startdatum: ${race.startDate}`);
-        console.log(`Enddatum: ${race.endDate}`);
-        console.log(`Ort: ${race.location}`);
-        console.log(`Land: ${race.country}`);
-        console.log(`Strecke: ${race.circuit}`);
-        console.log(`Länge der Strecke: ${race.length_km} km`);
-        console.log(`Anzahl der Runden: ${race.laps}`);
-        console.log(`Startzeit: ${race.start_time}`);
-        console.log('----------------------------');
-        */
+
         const raceSelectionDiv = document.createElement("div");
         raceSelectionDiv.className = "chooseRaceBtn";
         //raceTd HTML Element erstellen
@@ -98,8 +87,6 @@ function displayRaces(){
 }
 
 function fillDropdowns() {
-
-
     driverList.teams.forEach(team => {
         team.drivers.forEach(driver => {
             console.log(driver.name);
