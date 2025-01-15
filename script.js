@@ -6,6 +6,7 @@ let raceList = [];
 let driverList = [];
 let currentDate = new Date(); // Erzeugt ein Date-Objekt
 
+
 document.addEventListener("DOMContentLoaded", function () {
     chooseRaceDiv = document.getElementById("chooseRaceDiv");
     selectBetRaceWinner = document.getElementById("betRaceWinner");
@@ -129,7 +130,7 @@ function preSelectUpcomingRace() {
     let racesInPast = 1;
     raceList.races.forEach(race => {
         // Durch Objekt iterieren
-        if (new Date(new Date(race.endDate).setHours(24,0,0,0)) <= currentDate) {
+        if (new Date(new Date(race.endDate).setHours(24, 0, 0, 0)) <= currentDate) {
             racesInPast++;
         }
     });
@@ -140,3 +141,96 @@ function preSelectUpcomingRace() {
     handleRadioClick(radioToSelect);
     console.log("automatically changed selected Race");
 }
+
+function collectBetData() {
+    const data = {
+        raceNum: document.querySelector('input[name="chosenRace"]:checked').value,
+        winnerNum: selectBetRaceWinner.value,
+        tenthNum: selectBetP10.value,
+        firstDnfNum: selectBetFirstDnf.value,
+        gamblerId: 12
+    };
+    console.log(data);
+    console.log(JSON.stringify(data));
+    sendRaceBetData(data);
+}
+
+function sendRaceBetData(data) {
+    fetch('saveNewRaceBet.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Fehler beim Speichern der Daten.');
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log('Daten erfolgreich gespeichert:', result);
+        })
+        .catch(error => {
+            console.error('Fehler:', error);
+        });
+}
+
+
+//Google Login
+window.onload = function () {
+    google.accounts.id.initialize({
+        client_id: '616726250308-1kqo663kkqup7shimcr41re03hqif15o.apps.googleusercontent.com',
+        callback: handleCredentialResponse
+    });
+    google.accounts.id.prompt(); // Automatischer Login-Versuch (optional)
+};
+
+function handleCredentialResponse(response) {
+    console.log("Encoded JWT ID Token: " + response.credential);
+
+    // Den ID-Token an dein Backend senden (callback.php)
+    fetch('auth/callback.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            token: response.credential  // Der ID-Token wird hier übermittelt
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Erfolgreich angemeldet:", data);
+            // Weiterleitung nach erfolgreicher Anmeldung
+        })
+        .catch(error => {
+            console.error("Fehler beim Anmelden:", error);
+        });
+}
+
+
+// Token an deinen Server senden
+function sendTokenToServer(idToken) {
+    fetch('/auth/callback.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: idToken })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Erfolgreich angemeldet:", data);
+                document.body.innerHTML += `<p>Willkommen, ${data.name}!</p>`;
+            } else {
+                console.error("Fehler bei der Anmeldung:", data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Fehler beim Anmelden:", error);
+        });
+}
+

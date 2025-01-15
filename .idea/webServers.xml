@@ -3,7 +3,14 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="5f38d2c6-3111-4bf3-880c-ee9dd59e34d5" name="Ionos Webspace">
-        <fileTransfer accessType="SFTP" host="access-5016947148.webspace-host.com" port="22" sshConfigId="3eaf0f95-93ec-4907-870f-0211668a77bf" sshConfig="a1542166@access-5016947148.webspace-host.com:22 password">
+        <fileTransfer accessType="SFTP" host="access-5016947148.webspace-host.com" port="22" sshConfigId="3eaf0f95-93ec-4907-870f-0211668a77bf" sshConfig="a824461@access-5016947148.webspace-host.com:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="64a0cca5-f335-4758-841d-a4a3f1ff755c" name="Ionos Webspace with SSH">
+        <fileTransfer accessType="SFTP" host="access-5016947148.webspace-host.com" port="22" sshConfigId="3eaf0f95-93ec-4907-870f-0211668a77bf" sshConfig="a824461@access-5016947148.webspace-host.com:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

@@ -5,6 +5,13 @@
       <paths name="Ionos Webspace">
         <serverdata>
           <mappings>
+            <mapping deploy="/F1Wetten" local="$PROJECT_DIR$" web="f1wetten.com" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="Ionos Webspace with SSH">
+        <serverdata>
+          <mappings>
             <mapping deploy="/F1Wetten" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
