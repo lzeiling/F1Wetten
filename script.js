@@ -1,3 +1,6 @@
+import OAuth2Client from 'google-auth-library';
+const client = new OAuth2Client('616726250308-1kqo663kkqup7shimcr41re03hqif15o.apps.googleusercontent.com');
+
 let chooseRaceDiv;
 let selectBetRaceWinner;
 let selectBetP10;
@@ -5,6 +8,7 @@ let selectBetFirstDnf;
 let raceList = [];
 let driverList = [];
 let currentDate = new Date(); // Erzeugt ein Date-Objekt
+
 
 document.addEventListener("DOMContentLoaded", function () {
     chooseRaceDiv = document.getElementById("chooseRaceDiv");
@@ -129,7 +133,7 @@ function preSelectUpcomingRace() {
     let racesInPast = 1;
     raceList.races.forEach(race => {
         // Durch Objekt iterieren
-        if (new Date(new Date(race.endDate).setHours(24,0,0,0)) <= currentDate) {
+        if (new Date(new Date(race.endDate).setHours(24, 0, 0, 0)) <= currentDate) {
             racesInPast++;
         }
     });
@@ -140,3 +144,61 @@ function preSelectUpcomingRace() {
     handleRadioClick(radioToSelect);
     console.log("automatically changed selected Race");
 }
+
+function collectBetData() {
+    const data = {
+        raceNum: document.querySelector('input[name="chosenRace"]:checked').value,
+        winnerNum: selectBetRaceWinner.value,
+        tenthNum: selectBetP10.value,
+        firstDnfNum: selectBetFirstDnf.value,
+        gamblerId: 12
+    };
+    console.log(data);
+    console.log(JSON.stringify(data));
+    sendRaceBetData(data);
+}
+
+function sendRaceBetData(data) {
+    fetch('saveNewRaceBet.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Fehler beim Speichern der Daten.');
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log('Daten erfolgreich gespeichert:', result);
+        })
+        .catch(error => {
+            console.error('Fehler:', error);
+        });
+}
+
+
+//Google Login
+async function verifyToken(idToken) {
+    const ticket = await client.verifyIdToken({
+        idToken: idToken,
+        audience: '616726250308-1kqo663kkqup7shimcr41re03hqif15o.apps.googleusercontent.com',
+    });
+    const payload = ticket.getPayload();
+    return payload; // Enthält User-Infos wie Name, Email, etc.
+}
+
+//Route für Google Login
+app.post('/auth/callback', async (req, res) => {
+    const { token } = req.body;
+    try {
+        const userData = await verifyToken(token);
+        // Nutzer in der Datenbank speichern oder Session erstellen
+        res.send(userData);
+    } catch (error) {
+        res.status(400).send('Ungültiges Token');
+    }
+});
