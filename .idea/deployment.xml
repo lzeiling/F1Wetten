@@ -12,7 +12,7 @@
       <paths name="Ionos Webspace with SSH">
         <serverdata>
           <mappings>
-            <mapping deploy="/F1Wetten" local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
