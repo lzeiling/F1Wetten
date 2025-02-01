@@ -8,6 +8,16 @@ let currentDate = new Date(); // Erzeugt ein Date-Objekt
 
 
 document.addEventListener("DOMContentLoaded", function () {
+    // Eigenen Button auswählen
+    const customLoginButton = document.getElementById("customGoogleLoginButton");
+
+    // Event-Listener für den Klick hinzufügen
+    customLoginButton.addEventListener("click", function () {
+        // Google-Login-Prozess starten
+        google.accounts.id.prompt();
+    });
+
+    // Rest deines Codes
     chooseRaceDiv = document.getElementById("chooseRaceDiv");
     selectBetRaceWinner = document.getElementById("betRaceWinner");
     selectBetP10 = document.getElementById("betP10");
@@ -17,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     loadDriverList();
 });
 
+// Rest deines Codes bleibt unverändert
 
 function loadRaceList() {
     fetch('assets/raceList.json') // Pfad zur Datei
@@ -178,7 +189,7 @@ function sendRaceBetData(data) {
 }
 
 
-//Google Login
+// Google Login
 window.onload = function () {
     google.accounts.id.initialize({
         client_id: '616726250308-1kqo663kkqup7shimcr41re03hqif15o.apps.googleusercontent.com',
@@ -200,37 +211,21 @@ function handleCredentialResponse(response) {
             token: response.credential  // Der ID-Token wird hier übermittelt
         })
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             console.log("Erfolgreich angemeldet:", data);
             // Weiterleitung nach erfolgreicher Anmeldung
+            // Beispiel: window.location.href = '/dashboard';
         })
         .catch(error => {
             console.error("Fehler beim Anmelden:", error);
-        });
-}
-
-
-// Token an deinen Server senden
-function sendTokenToServer(idToken) {
-    fetch('/auth/callback.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ token: idToken })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log("Erfolgreich angemeldet:", data);
-                document.body.innerHTML += `<p>Willkommen, ${data.name}!</p>`;
-            } else {
-                console.error("Fehler bei der Anmeldung:", data.error);
-            }
-        })
-        .catch(error => {
-            console.error("Fehler beim Anmelden:", error);
+            // Benutzerfeedback bei Fehlern
+            alert("Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.");
         });
 }
 
