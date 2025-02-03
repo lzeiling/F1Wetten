@@ -1,4 +1,5 @@
-let chooseRaceDiv;
+let chooseRaceDivDesktop;
+let chooseRaceDivMobile;
 let selectBetRaceWinner;
 let selectBetP10;
 let selectBetFirstDnf;
@@ -21,13 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Rest deines Codes
-    chooseRaceDiv = document.getElementById("chooseRaceDiv");
+    chooseRaceDivDesktop = document.getElementById("chooseRaceDivDesktop");
+    chooseRaceDivMobile = document.getElementById("chooseRaceDivMobile");
     selectBetRaceWinner = document.getElementById("betRaceWinner");
     selectBetP10 = document.getElementById("betP10");
     selectBetFirstDnf = document.getElementById("betFirstDnf");
 
-    //if (screen.width < 768) {
-    //}
 
     loadRaceList();
     loadDriverList();
@@ -79,8 +79,8 @@ function displayRaces() {
     raceList.races.forEach(race => {
         // Durch Objekt iterieren
 
-        const raceSelectionDiv = document.createElement("div");
-        raceSelectionDiv.className = "chooseRaceBtn";
+        const chooseRaceBtn = document.createElement("div");
+        chooseRaceBtn.className = "chooseRaceBtn";
         //raceTd HTML Element erstellen
 
         const input = document.createElement("input");
@@ -98,10 +98,20 @@ function displayRaces() {
 
         label.appendChild(img);  // img zu einem Bestandteil des labels machen
 
-        raceSelectionDiv.appendChild(input);
-        raceSelectionDiv.appendChild(label);
+        chooseRaceBtn.appendChild(input);
+        chooseRaceBtn.appendChild(label);
 
-        chooseRaceDiv.appendChild(raceSelectionDiv);
+        if (screen.width < 768) {
+            const p = document.createElement("p");
+            p.textContent = race.location;
+            chooseRaceBtn.appendChild(p);
+
+            chooseRaceBtn.setAttribute("data-radio-id", "chosenRaceRadio" + race.number);
+            chooseRaceDivMobile.appendChild(chooseRaceBtn);
+        }else {
+            chooseRaceDivDesktop.appendChild(chooseRaceBtn);
+        }
+
     });
 }
 
@@ -125,6 +135,17 @@ function addRadioClickListeners() {
         radio.addEventListener("change", function (event) {
             // Aufruf der Funktion bei Klick
             handleRadioClick(event.target);
+        });
+    });
+
+    document.querySelectorAll('.chooseRaceBtn').forEach((div) => {
+        div.addEventListener('click', function () {
+            // Hole die ID des zugehörigen Radio-Buttons aus dem data-radio-id-Attribut
+            const radioId = this.getAttribute('data-radio-id');
+            // Finde den Radio-Button anhand der ID
+            const radioButton = document.getElementById(radioId);
+            // Simuliere den Klick auf den Radio-Button
+            radioButton.click();
         });
     });
 }
@@ -248,6 +269,14 @@ function swapOverlay() {
         document.getElementById("overlay").style.display = "block";
         document.getElementById("settingsGear").style.marginTop = "5%";
         document.getElementById("settingsGear").style.marginRight = "5%";
+    }
+}
+
+function swapRaceDivVisMobile(){
+    if (document.getElementById("chooseRaceDivMobile").style.display === "flex") {
+        document.getElementById("chooseRaceDivMobile").style.display = "none";
+    } else {
+        document.getElementById("chooseRaceDivMobile").style.display = "flex";
     }
 }
 

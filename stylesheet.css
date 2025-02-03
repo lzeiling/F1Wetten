@@ -22,7 +22,15 @@ h1 {
     text-align: center;
 }
 
-#chooseRaceDiv {
+Button:hover {
+    background-color:#408c99;
+}
+Button:active {
+    position:relative;
+    top:1px;
+}
+
+#chooseRaceDivDesktop {
     display: flex;
     justify-content: space-around;  /* Horizontal zentrieren */
     align-content: flex-start;
@@ -31,25 +39,17 @@ h1 {
     height: auto;
 }
 
-.chooseRaceBtn > label{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 60px;
-    width: 60px;
-}
-
-#chooseRaceDiv input[type="radio"] {
+#chooseRaceDivDesktop input[type="radio"] {
     display: none;
 }
 
-#chooseRaceDiv input[type="radio"]:checked + label > img{
+#chooseRaceDivDesktop input[type="radio"]:checked + label > img{
     border: 3px solid deepskyblue;
     border-radius: 50px;
     background-color: deepskyblue;
 }
 
-#chooseRaceDiv label img {
+#chooseRaceDivDesktop label img {
     width: 50px;
     height: auto;
     border-radius: 50px;
@@ -88,7 +88,7 @@ h1 {
     right: 0;
     bottom: 0;
     background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    z-index: 3; /* Specify a stack order in case you're using a different order for other elements */
     cursor: pointer; /* Add a pointer on hover */
     color: white;
 }
@@ -99,7 +99,7 @@ h1 {
     position: fixed;
     top: 10px;
     right: 10px;
-    z-index: 3;
+    z-index: 4;
     cursor: pointer
 }
 
@@ -126,10 +126,93 @@ Button {
     text-decoration:none;
     text-shadow:0px 1px 0px #3d768a;
 }
-Button:hover {
-    background-color:#408c99;
+
+@media only screen and (min-width: 768px) {
+    .chooseRaceBtn > label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 60px;
+        width: 60px;
+    }
 }
-Button:active {
-    position:relative;
-    top:1px;
+
+
+#chooseRaceDivMobile{
+    position: fixed;
+    align-self: start;
+    z-index: 2;
+    width: 80%;
+    height: 100%;
+    background-color: #333333;
+    border-right: 3px solid deepskyblue;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    color: white;
+}
+
+#swapRaceDivVisMobileBtn{
+    display: none;
+}
+
+@media only screen and (max-width: 768px) {
+    #chooseRaceDivDesktop {
+        display: none;
+    }
+
+    .chooseRaceBtn > label {
+        display: inline-block; /* Damit das Label die Größe annehmen kann */
+        height: 15vw; /* Höhe basierend auf der Viewport-Breite */
+        width: 15vw; /* Breite basierend auf der Viewport-Breite */
+        max-width: 100px; /* Maximale Größe für große Bildschirme */
+        max-height: 100px; /* Maximale Größe für große Bildschirme */
+        position: relative; /* Für die Positionierung des Bildes */
+        overflow: hidden; /* Verhindert, dass das Bild über das Label hinausragt */
+        border-radius: 10%; /* Macht das Label kreisförmig */
+    }
+
+    .chooseRaceBtn label img {
+        position: absolute; /* Positioniert das Bild absolut innerhalb des Labels */
+        top: 0;
+        left: 0;
+        width: 100%; /* Füllt die gesamte Breite des Labels aus */
+        height: 100%; /* Füllt die gesamte Höhe des Labels aus */
+        object-fit: cover; /* Stellt sicher, dass das Bild das Label vollständig abdeckt */
+        border-radius: 20%; /* Macht das Bild kreisförmig */
+    }
+
+    .chooseRaceBtn > p {
+        font-size: 5vw; /* Schriftgröße basierend auf der Viewport-Breite */
+        margin-left: 10px; /* Abstand zwischen Bild und Text */
+    }
+
+    .chooseRaceBtn {
+        display: flex;
+        align-items: center;
+        width: 96%;
+        height: 8%;
+        border-bottom: 1px solid #000000;
+        padding: 3px 8px;
+
+    }
+
+    #chooseRaceDivMobile input[type="radio"] {
+        display: none;
+    }
+
+    .chooseRaceBtn:has(input[type="radio"]:checked) {
+        border-top: 3px solid deepskyblue;
+        border-bottom: 3px solid deepskyblue;
+        border-radius: 3px;
+    }
+
+    #swapRaceDivVisMobileBtn{
+        display: block;
+        position: absolute;
+        top: 5px;
+        left: 10px;
+        z-index: 1;
+        color: white;
+    }
 }
