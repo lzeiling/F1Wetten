@@ -10,13 +10,24 @@
     <link rel="icon" href="assets/graphics/F1CarSymbol.png" type="image/png">
 </head>
 <body>
-<header>
+<header style=" position: sticky; top: 0px; z-index: 1;">
     <h1>F1-Wetten</h1>
 </header>
-<div class="googleLogin">
-    <button id="customGoogleLoginButton">Mit Google anmelden</button>
+<img id="settingsGear" onclick="swapOverlay()" src="assets/graphics/gear.svg">
+
+
+<div id="overlay">
+    <div class="settingsDiv">
+        <h4>Google Login:</h4>
+        <button id="customGoogleLoginButton">Mit Google anmelden</button><br>
+        <p>Aktuell eingeloggt als:</p>
+        <span id="loggedInAs">none</span>
+        <h4>Username: <span id="usernameSpan"></span></h4>
+        <input id="customNicknameInput" type="text" placeholder="Neuer Name"><br>
+        <button id="enterNickname">Namen ändern</button>
+    </div>
+
 </div>
-<div id="overlay">test</div>
 
 <div id="chooseRaceDiv">
     <!-- Beispiel Auswahl
@@ -37,7 +48,7 @@
     </div>
     <div id="betDiv">
         <h1>Wette platzieren</h1>
-        <form id="betForm">
+        <div id="betForm">
             <label for="betRaceWinner">Sieger</label><br>
             <select name="betRaceWinner" id="betRaceWinner">
             </select><br>
@@ -50,8 +61,8 @@
             <select name="betFirstDnf" id="betFirstDnf">
             </select><br>
 
-            <input type="button" onclick="collectBetData()" value="Wette platzieren">
-        </form>
+            <button onclick="collectBetData()">Wette platzieren</button>
+        </div>
     </div>
 </div>
 </body>

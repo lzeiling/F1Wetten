@@ -5,6 +5,9 @@ let selectBetFirstDnf;
 let raceList = [];
 let driverList = [];
 let currentDate = new Date(); // Erzeugt ein Date-Objekt
+let userName = "";
+let userEmail = "";
+let userSub = "";
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -22,6 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
     selectBetRaceWinner = document.getElementById("betRaceWinner");
     selectBetP10 = document.getElementById("betP10");
     selectBetFirstDnf = document.getElementById("betFirstDnf");
+
+    //if (screen.width < 768) {
+    //}
 
     loadRaceList();
     loadDriverList();
@@ -154,16 +160,19 @@ function preSelectUpcomingRace() {
 }
 
 function collectBetData() {
-    const data = {
-        raceNum: document.querySelector('input[name="chosenRace"]:checked').value,
-        winnerNum: selectBetRaceWinner.value,
-        tenthNum: selectBetP10.value,
-        firstDnfNum: selectBetFirstDnf.value,
-        gamblerId: 12
-    };
-    console.log(data);
-    console.log(JSON.stringify(data));
-    sendRaceBetData(data);
+    if (userSub !== "") {
+        const data = {
+            raceNum: document.querySelector('input[name="chosenRace"]:checked').value,
+            winnerNum: selectBetRaceWinner.value,
+            tenthNum: selectBetP10.value,
+            firstDnfNum: selectBetFirstDnf.value,
+            gamblerSub: userSub,
+        };
+        console.log(data);
+        sendRaceBetData(data);
+    } else {
+        alert("Bitte zuerst anmelden und Benutzernamen festlegen!");
+    }
 }
 
 function sendRaceBetData(data) {
@@ -219,6 +228,7 @@ function handleCredentialResponse(response) {
         })
         .then(data => {
             console.log("Erfolgreich angemeldet:", data);
+            processLoginCallbackData(data);
             // Weiterleitung nach erfolgreicher Anmeldung
             // Beispiel: window.location.href = '/dashboard';
         })
@@ -229,3 +239,27 @@ function handleCredentialResponse(response) {
         });
 }
 
+function swapOverlay() {
+    if (document.getElementById("overlay").style.display === "block") {
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("settingsGear").style.marginTop = "0px";
+        document.getElementById("settingsGear").style.marginRight = "0px";
+    } else {
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("settingsGear").style.marginTop = "5%";
+        document.getElementById("settingsGear").style.marginRight = "5%";
+    }
+}
+
+function processLoginCallbackData(userdata) {
+    userName = userdata['username'];
+    userEmail = userdata['email'];
+    userSub = userdata['sub'];
+    if (userName !== null) {
+        document.getElementById("usernameSpan").innerText = userName;
+    } else {
+        document.getElementById("usernameSpan").innerText = "kein Benutzername festgelegt";
+    }
+
+    document.getElementById("loggedInAs").innerHTML = userEmail;
+}

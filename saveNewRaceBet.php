@@ -22,10 +22,10 @@ try {
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Überprüfen, ob alle notwendigen Daten vorhanden sind
-if (isset($data['raceNum'], $data['winnerNum'], $data['tenthNum'], $data['firstDnfNum'], $data['gamblerId'])) {
+if (isset($data['raceNum'], $data['winnerNum'], $data['tenthNum'], $data['firstDnfNum'], $data['gamblerSub'])) {
     // SQL-Abfrage: Einfügen oder Aktualisieren
-    $sql = "INSERT INTO raceBet (raceNum, winnerNum, tenthNum, firstDnfNum, gamblerId)
-            VALUES (:raceNum, :winnerNum, :tenthNum, :firstDnfNum, :gamblerId)
+    $sql = "INSERT INTO raceBet (raceNum, winnerNum, tenthNum, firstDnfNum, gamblerSub)
+            VALUES (:raceNum, :winnerNum, :tenthNum, :firstDnfNum, :gamblerSub)
             ON DUPLICATE KEY UPDATE
                 winnerNum = VALUES(winnerNum),
                 tenthNum = VALUES(tenthNum),
@@ -38,7 +38,7 @@ if (isset($data['raceNum'], $data['winnerNum'], $data['tenthNum'], $data['firstD
             ':winnerNum' => $data['winnerNum'],
             ':tenthNum' => $data['tenthNum'],
             ':firstDnfNum' => $data['firstDnfNum'],
-            ':gamblerId' => $data['gamblerId']
+            ':gamblerSub' => $data['gamblerSub']
         ]);
         echo json_encode(['success' => 'Daten erfolgreich eingefügt oder aktualisiert.']);
     } catch (PDOException $e) {
@@ -47,6 +47,6 @@ if (isset($data['raceNum'], $data['winnerNum'], $data['tenthNum'], $data['firstD
     }
 } else {
     http_response_code(400);
-    echo json_encode(['error' => 'Ungültige Eingabedaten.']);
+    echo json_encode(['error' => 'Ungültige Eingabedaten.', $data['raceNum'], $data['winnerNum'], $data['tenthNum'], $data['firstDnfNum'], $data['gamblerSub']]);
 }
 ?>

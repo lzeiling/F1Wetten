@@ -78,20 +78,6 @@ h1 {
     color: #333;
 }
 
-.googleLogin {
-    text-align: right;
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
-    padding: 5px 5px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
 #overlay {
     position: fixed; /* Sit on top of the page content */
     display: none; /* Hidden by default */
@@ -104,4 +90,46 @@ h1 {
     background-color: rgba(0,0,0,0.5); /* Black background with opacity */
     z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
     cursor: pointer; /* Add a pointer on hover */
+    color: white;
+}
+
+#settingsGear {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+    cursor: pointer
+}
+
+.settingsDiv {
+    background-color: #333333;
+    height: 85%;
+    width: 85%;
+    margin: 5%;
+    border-radius: 30px;
+    padding: 2.5%;
+    cursor: default;
+}
+
+Button {
+    box-shadow: 0px 10px 14px -7px #276873;
+    background-color:#599bb3;
+    border-radius:8px;
+    border: none;
+    display:inline-block;
+    cursor:pointer;
+    color: white;
+    font-weight:bold;
+    padding:5px 10px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #3d768a;
+}
+Button:hover {
+    background-color:#408c99;
+}
+Button:active {
+    position:relative;
+    top:1px;
 }

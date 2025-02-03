@@ -34,7 +34,7 @@ try {
     // Datenbankverbindungsdetails
     $host = 'db5016947436.hosting-data.io';
     $dbname = 'dbs13663781';
-    $username = 'dbu2703977';
+    $dbUsername = 'dbu2703977';
 
     // Passwort sicher aus Datei lesen
     $pw_file_path = realpath(__DIR__ . "/../../pw.txt");
@@ -45,7 +45,7 @@ try {
     $password = trim(file_get_contents($pw_file_path));
 
     // Verbindung zur Datenbank herstellen
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, [
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $dbUsername, $password, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]);
@@ -55,10 +55,21 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':sub' => $_SESSION['user_sub']]);
 
+    // Nutzername aus der Datenbank abrufen
+    $sql = "SELECT nickname FROM `users` WHERE sub = (:sub)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':sub' => $_SESSION['user_sub']]);
+
+    // Daten abrufen
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+    $username = $userData['nickname'] ?? null; // 'nickname' aus der Datenbank holen
+
     // Erfolgreiche Anmeldung zurückgeben
     echo json_encode([
         'success' => true,
-        'sub' => $_SESSION['user_sub']
+        'sub' => $_SESSION['user_sub'],
+        'username' => $username,
+        'email' => $payload['email']
     ]);
 
 } catch (Exception $e) {
@@ -67,4 +78,3 @@ try {
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     exit();
 }
-?>
