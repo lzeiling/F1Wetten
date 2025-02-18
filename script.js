@@ -108,7 +108,7 @@ function displayRaces() {
 
             chooseRaceBtn.setAttribute("data-radio-id", "chosenRaceRadio" + race.number);
             chooseRaceDivMobile.appendChild(chooseRaceBtn);
-        }else {
+        } else {
             chooseRaceDivDesktop.appendChild(chooseRaceBtn);
         }
 
@@ -272,7 +272,7 @@ function swapOverlay() {
     }
 }
 
-function swapRaceDivVisMobile(){
+function swapRaceDivVisMobile() {
     if (document.getElementById("chooseRaceDivMobile").style.display === "flex") {
         document.getElementById("chooseRaceDivMobile").style.display = "none";
     } else {
@@ -291,4 +291,22 @@ function processLoginCallbackData(userdata) {
     }
 
     document.getElementById("loggedInAs").innerHTML = userEmail;
+}
+
+function changeUsername() {
+    newUserName = document.getElementById("newUsername").value;
+    console.log(newUserName);
+
+    var data= {
+        newUsername: newUserName,
+        userSub: userSub
+    }
+
+    fetch('saveNewUsername.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then()
 }
