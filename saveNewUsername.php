@@ -12,16 +12,21 @@ header('Content-Type: application/json');
 $host = 'db5016947436.hosting-data.io';
 $dbname = 'dbs13663781';
 $username = 'dbu2703977';
+$passwordFile = "../pw.txt";
 
 // Passwort aus Datei lesen
-$pwFile = fopen("../pw.txt", "r");
-if (!$pwFile) {
+if (!file_exists($passwordFile)) {
     http_response_code(500);
-    echo json_encode(['error' => 'Passwortdatei konnte nicht geöffnet werden.']);
+    echo json_encode(['error' => 'Passwortdatei nicht gefunden.']);
     exit();
 }
-$password = trim(fgets($pwFile));
-fclose($pwFile);
+
+$password = fgets(fopen($passwordFile, "r"));
+if ($password === false) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Fehler beim Lesen der Passwortdatei.']);
+    exit();
+}
 
 // Verbindung zur Datenbank herstellen
 try {
@@ -46,7 +51,7 @@ try {
     $data = json_decode($json, true);
     if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
         http_response_code(400);
-        echo json_encode(['error' => 'Ungültige JSON-Daten.']);
+        echo json_encode(['error' => 'Ungültige JSON-Daten: ' . json_last_error_msg()]);
         exit();
     }
 
@@ -54,7 +59,7 @@ try {
     if (isset($data['newUsername']) && isset($data['userSub'])) {
         // SQL-Abfrage: Update des Benutzernamens
         try {
-            $stmt = $pdo->prepare("UPDATE user SET nickname = :newUsername WHERE sub = :userSub");
+            $stmt = $pdo->prepare("UPDATE users SET nickname = :newUsername WHERE sub = :userSub");
             $stmt->execute([
                 ':newUsername' => $data['newUsername'],
                 ':userSub' => $data['userSub'],
@@ -67,7 +72,7 @@ try {
                 exit();
             }
 
-            echo json_encode(['success' => 'Nutzername erfolgreich aktualisiert.']);
+            echo json_encode(['success' => 'Nutzername erfolgreich aktualisiert.', 'newUsername' => $data['newUsername']]);
         } catch (PDOException $e) {
             error_log("SQL-Fehler: " . $e->getMessage());
             http_response_code(500);

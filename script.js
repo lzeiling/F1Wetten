@@ -294,7 +294,7 @@ function processLoginCallbackData(userdata) {
 }
 
 function changeUsername() {
-    newUserName = document.getElementById("newUsername").value;
+    var newUserName = document.getElementById("newUsername").value;
     console.log(newUserName);
 
     var data= {
@@ -308,5 +308,18 @@ function changeUsername() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    }).then()
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Fehler beim Speichern der Daten.');
+        }
+        return response.json();
+    })
+        .then(result => {
+            document.getElementById("usernameSpan").innerText = result['newUsername'];
+            alert("Username auf ,," + result['newUsername'] + "'' geändert");
+            console.log('Daten erfolgreich gespeichert:', result);
+        })
+        .catch(error => {
+            console.error('Fehler:', error);
+        });
 }
