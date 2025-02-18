@@ -100,13 +100,14 @@ function displayRaces() {
 
         chooseRaceBtn.appendChild(input);
         chooseRaceBtn.appendChild(label);
+        chooseRaceBtn.setAttribute("data-radio-id", "chosenRaceRadio" + race.number);
 
         if (screen.width < 768) {
             const p = document.createElement("p");
             p.textContent = race.location;
             chooseRaceBtn.appendChild(p);
 
-            chooseRaceBtn.setAttribute("data-radio-id", "chosenRaceRadio" + race.number);
+
             chooseRaceDivMobile.appendChild(chooseRaceBtn);
         } else {
             chooseRaceDivDesktop.appendChild(chooseRaceBtn);
@@ -211,6 +212,7 @@ function sendRaceBetData(data) {
             return response.json();
         })
         .then(result => {
+            alert('Wette erfolgreich abgegeben');
             console.log('Daten erfolgreich gespeichert:', result);
         })
         .catch(error => {
