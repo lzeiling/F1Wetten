@@ -13,11 +13,13 @@
 <header style=" position: sticky; top: 0px; z-index: 1; display: inline-block;">
     <h1>F1-Wetten</h1>
 </header>
-<img id="settingsGear" onclick="swapOverlay()" src="assets/graphics/gear.svg" alt="settings">
-<h1 id="swapRaceDivVisMobileBtn" onclick="swapRaceDivVisMobile()">&#9776;</h1>
+<img id="settingsGear" onclick="swapOptionOverlay()" src="assets/graphics/gear.svg" alt="settings">
+<img id="swapRaceDivVisMobileBtn" onclick="swapRaceDivVisMobile()" src="assets/graphics/tripleBar.svg"
+     alt="Rennen Auswählen">
 
-<div id="overlay">
+<div id="optionsOverlay" class="overlay">
     <div class="settingsDiv">
+        <img class="closeX" onclick="swapOptionOverlay()" src="assets/graphics/close-x.svg" alt="close">
         <h4>Google Login:</h4>
         <button id="customGoogleLoginButton">Mit Google anmelden</button>
         <br>
@@ -28,6 +30,11 @@
         <button id="changeUsername" onclick="changeUsername()">Namen ändern</button>
     </div>
 
+    <div class="evaluationDiv">
+        <img class="closeX" onclick="swapEvaluationOverlay()" src="assets/graphics/close-x.svg" alt="close">
+        <h4>Auswertung</h4>
+
+    </div>
 </div>
 
 <div id="chooseRaceDivDesktop">
@@ -39,7 +46,11 @@
     -->
 </div>
 <div id="chooseRaceDivMobile" style="display: none;">
-    <h1 style="height: 8%"><p style="display: inline-block" onclick="swapRaceDivVisMobile()">&#9776;</p> Rennen</h1>
+    <div id="chooseRaceDivMobileHeader">
+        <h1>Rennen</h1>
+    </div>
+    <div id="chooseRaceDivMobileContent">
+    </div>
     <!-- Beispiel Auswahl
     <div class="chooseRaceBtn" data-radio-id="chosenRaceRadio1">
         <input type="radio" name="chosenRace" value="1" id="chosenRaceRadio1">

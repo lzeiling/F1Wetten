@@ -1,5 +1,6 @@
 let chooseRaceDivDesktop;
 let chooseRaceDivMobile;
+let chooseRaceDivMobileContent;
 let selectBetRaceWinner;
 let selectBetP10;
 let selectBetFirstDnf;
@@ -24,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Rest deines Codes
     chooseRaceDivDesktop = document.getElementById("chooseRaceDivDesktop");
     chooseRaceDivMobile = document.getElementById("chooseRaceDivMobile");
+    chooseRaceDivMobileContent = document.getElementById("chooseRaceDivMobileContent");
     selectBetRaceWinner = document.getElementById("betRaceWinner");
     selectBetP10 = document.getElementById("betP10");
     selectBetFirstDnf = document.getElementById("betFirstDnf");
@@ -108,7 +110,7 @@ function displayRaces() {
             chooseRaceBtn.appendChild(p);
 
 
-            chooseRaceDivMobile.appendChild(chooseRaceBtn);
+            chooseRaceDivMobileContent.appendChild(chooseRaceBtn);
         } else {
             chooseRaceDivDesktop.appendChild(chooseRaceBtn);
         }
@@ -262,15 +264,21 @@ function handleCredentialResponse(response) {
         });
 }
 
-function swapOverlay() {
-    if (document.getElementById("overlay").style.display === "block") {
-        document.getElementById("overlay").style.display = "none";
-        document.getElementById("settingsGear").style.marginTop = "0px";
-        document.getElementById("settingsGear").style.marginRight = "0px";
+function swapOptionOverlay() {
+    if (document.getElementById("optionsOverlay").style.display === "block") {
+        document.getElementById("optionsOverlay").style.display = "none";
+        document.getElementById("settingsGear").style.display = "block";
+   } else {
+        document.getElementById("optionsOverlay").style.display = "block";
+        document.getElementById("settingsGear").style.display = "none";
+    }
+}
+
+function swapEvaluationOverlay() {
+    if (document.getElementById("evaluationOverlay").style.display === "block") {
+        document.getElementById("evaluationOverlay").style.display = "none";
     } else {
-        document.getElementById("overlay").style.display = "block";
-        document.getElementById("settingsGear").style.marginTop = "5%";
-        document.getElementById("settingsGear").style.marginRight = "5%";
+        document.getElementById("evaluationOverlay").style.display = "block";
     }
 }
 
