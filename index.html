@@ -30,10 +30,52 @@
         <button id="changeUsername" onclick="changeUsername()">Namen ändern</button>
     </div>
 
+</div>
+
+<div id="evaluationOverlay" class="overlay">
     <div class="evaluationDiv">
         <img class="closeX" onclick="swapEvaluationOverlay()" src="assets/graphics/close-x.svg" alt="close">
         <h4>Auswertung</h4>
-
+        <select id="evaluationRaceSelect" onChange="displayEvaluationData(this.value)">
+            <option value="wholeSeason" selected="selected">Gesamt</option>
+        </select>
+        <div id="evaluationDivSelectedRace">
+            <table id="evaluationRaceResult">
+                <tr>
+                    <th>Position</th>
+                    <th>Fahrer</th>
+                </tr>
+                <tr>
+                    <td>1.</td>
+                    <td>Max Verstappen</td>
+                </tr>
+                <tr>
+                    <td>2.</td>
+                    <td>Lewis Hamilton</td>
+                </tr>
+            </table>
+            <table id="evaluationBetResult" style="margin-top: 10px;">
+                <tr>
+                    <th>Spieler</th>
+                    <th>Tipp DNF</th>
+                    <th>Tipp 10ter</th>
+                    <th>Tipp Sieger</th>
+                    <th>Punkte</th>
+                </tr>
+                <tr>
+                    <td>Zeili</td>
+                    <td>Lewis Hamilton</td>
+                    <td>Charles Leclerc</td>
+                    <td>Max Verstappen</td>
+                </tr>
+                <tr>
+                    <td>Kaipi</td>
+                    <td>Lewis Hamilton</td>
+                    <td>Charles Leclerc</td>
+                    <td>Max Verstappen</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -85,6 +127,10 @@
 
             <button onclick="collectBetData()">Wette platzieren</button>
         </div>
+    </div>
+
+    <div id="evaluationDiv">
+        <button onclick="swapEvaluationOverlay()">Ergebnisse Auswerten</button>
     </div>
 </div>
 </body>

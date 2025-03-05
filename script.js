@@ -4,6 +4,7 @@ let chooseRaceDivMobileContent;
 let selectBetRaceWinner;
 let selectBetP10;
 let selectBetFirstDnf;
+let evaluationRaceSelect;
 let raceList = [];
 let driverList = [];
 let currentDate = new Date(); // Erzeugt ein Date-Objekt
@@ -22,17 +23,18 @@ document.addEventListener("DOMContentLoaded", function () {
         google.accounts.id.prompt();
     });
 
-    // Rest deines Codes
     chooseRaceDivDesktop = document.getElementById("chooseRaceDivDesktop");
     chooseRaceDivMobile = document.getElementById("chooseRaceDivMobile");
     chooseRaceDivMobileContent = document.getElementById("chooseRaceDivMobileContent");
     selectBetRaceWinner = document.getElementById("betRaceWinner");
     selectBetP10 = document.getElementById("betP10");
     selectBetFirstDnf = document.getElementById("betFirstDnf");
+    evaluationRaceSelect = document.getElementById("evaluationRaceSelect");
 
 
     loadRaceList();
     loadDriverList();
+    displayEvaluationData("wholeSeason");   //Benötigt da es nur "onchange" aufgerufen wird
 });
 
 // Rest deines Codes bleibt unverändert
@@ -104,6 +106,13 @@ function displayRaces() {
         chooseRaceBtn.appendChild(label);
         chooseRaceBtn.setAttribute("data-radio-id", "chosenRaceRadio" + race.number);
 
+        //Fill Dropdown for evaluation Selection
+        const evaluationRaceSelectOption = document.createElement("option");
+        evaluationRaceSelectOption.value = race.number;
+        evaluationRaceSelectOption.innerHTML = race.location;
+        evaluationRaceSelect.appendChild(evaluationRaceSelectOption);
+
+
         if (screen.width < 768) {
             const p = document.createElement("p");
             p.textContent = race.location;
@@ -125,8 +134,59 @@ function fillDropdowns() {
             selectBetRaceWinner.appendChild(new Option(driver.name + " " + driver.number, driver.number));
             selectBetP10.appendChild(new Option(driver.name + " " + driver.number, driver.number));
             selectBetFirstDnf.appendChild(new Option(driver.name + " " + driver.number, driver.number));
+
         })
     })
+}
+
+function displayEvaluationData(selectedRace) {
+    console.log(selectedRace);
+    const evaluationRaceResult = document.getElementById("evaluationRaceResult");
+    const evaluationBetResult = document.getElementById("evaluationBetResult");
+    evaluationRaceResult.innerHTML =    "<tr>\n" +
+                                        "<th>Position</th>\n" +
+                                        "<th>Fahrer</th>\n" +
+                                        "</tr>";
+    evaluationBetResult.innerHTML = "";
+
+
+
+
+    if(selectedRace!=="wholeSeason"){
+        var data;
+        fetch('printRaceResults.php')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Fehler beim Laden der Daten.');
+                }
+                return response.json();
+            })
+            .then(result => {
+                data = result;
+                console.log('Daten:', result);
+            })
+            .catch(error => {
+                console.error('Fehler:', error);
+            });
+
+
+        evaluationRaceResult.style.display = "table";
+        evaluationBetResult.style.display = "table";
+
+        const evaluationRaceResultTd1 = document.createElement("td");
+        const evaluationRaceResultTd2 = document.createElement("td");
+
+        evaluationRaceResultTd1.innerHTML = "1.";
+        evaluationRaceResultTd2.innerHTML = "Verstappen";
+
+        const evaluationRaceResultTr =document.createElement("tr");
+        evaluationRaceResultTr.appendChild(evaluationRaceResultTd1);
+        evaluationRaceResultTr.appendChild(evaluationRaceResultTd2);
+        evaluationRaceResult.appendChild(evaluationRaceResultTr);
+    }else{
+        evaluationRaceResult.style.display = "none";
+        evaluationBetResult.style.display = "none";
+    }
 }
 
 function addRadioClickListeners() {
@@ -151,6 +211,8 @@ function addRadioClickListeners() {
             radioButton.click();
         });
     });
+
+
 }
 
 // Funktion, die bei jedem Klick auf einen Radiobutton ausgeführt wird

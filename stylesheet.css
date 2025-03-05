@@ -78,6 +78,20 @@ Button:active {
     color: #333;
 }
 
+#evaluationDiv {
+    height: 150px;
+    padding-right: 10px;
+    justify-content: space-around;
+    display: flex;
+}
+
+#evaluationDiv > button {
+    height: 90%;
+    width: 90%;
+    margin-top: 5px;
+    font-size: 40px;
+}
+
 .overlay {
     position: fixed; /* Sit on top of the page content */
     display: none; /* Hidden by default */
@@ -88,7 +102,7 @@ Button:active {
     right: 0;
     bottom: 0;
     background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-    z-index: 3; /* Specify a stack order in case you're using a different order for other elements */
+    z-index: 4; /* Specify a stack order in case you're using a different order for other elements */
     cursor: pointer; /* Add a pointer on hover */
     color: white;
 }
@@ -99,7 +113,7 @@ Button:active {
     position: fixed;
     top: 10px;
     right: 10px;
-    z-index: 4;
+    z-index: 3;
     cursor: pointer
 }
 
@@ -159,6 +173,37 @@ Button {
     text-decoration:none;
     text-shadow:0px 1px 0px #3d768a;
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    overflow: hidden;
+}
+
+th {
+    background-color: #599bb3; /* Hellblauer Header */
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #555;
+}
+
+td {
+    border: 1px solid #555;
+}
+
+tr:nth-child(odd) {
+    background-color: #666666; /* Mittelgrau für ungerade Zeilen */
+}
+
+th:first-child, td:first-child {
+    border-left: none;
+}
+
+th:last-child, td:last-child {
+    border-right: none;
+}
+
 
 @media only screen and (min-width: 768px) {
     .chooseRaceBtn > label {

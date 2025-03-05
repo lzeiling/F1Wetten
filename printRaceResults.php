@@ -14,6 +14,9 @@ $dbname = 'dbs13663781';
 $username = 'dbu2703977';
 $passwordFile = "../pw.txt";
 
+// API-URL
+$apiUrl = "https://ergast.com/api/f1/2024/last/results/";
+
 // Passwort aus Datei lesen
 if (!file_exists($passwordFile)) {
     http_response_code(500);
@@ -52,23 +55,21 @@ try {
     $stmt->execute();
 
     // Ergebnisse abrufen
-    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $betResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if (empty($results)) {
+    if (empty($betResults)) {
         echo json_encode(['message' => 'Keine Daten für raceNum = 1 gefunden.']);
         exit();
     }
 
     // Ergebnisse als JSON zurückgeben
-    //echo json_encode(['success' => true, 'data' => $results]);
+    //echo json_encode(['success' => true, 'data' => $betResults]);
 } catch (PDOException $e) {
     error_log("SQL-Fehler: " . $e->getMessage());
     http_response_code(500);
     echo json_encode(['error' => 'Fehler bei der Datenbankabfrage: ' . $e->getMessage()]);
 }
 
-// API-URL
-$apiUrl = "https://ergast.com/api/f1/2024/last/results/";
 
 // API aufrufen
 try {
@@ -92,16 +93,19 @@ try {
         $driverNumber = (int)$result->Driver->PermanentNumber;
         $position = (int)$result['position'];
 
+        if($driverNumber == 33){
+            $driverNumber = 1;  //Max verstappen DriverNumber changed to 1
+        }
+
         // Endposition unter der Fahrernummer speichern
-        $raceResults[$driverNumber] = $position;
+        $raceResults[$position] = $driverNumber;
     }
 
-    // Ergebnisse als JSON zurückgeben
-    echo json_encode(['success' => true, 'data' => $raceResults]);
 } catch (Exception $e) {
     error_log("API-Fehler: " . $e->getMessage());
     http_response_code(500);
     echo json_encode(['error' => 'Fehler beim Abrufen oder Verarbeiten der API-Daten: ' . $e->getMessage()]);
 }
-
+// Ergebnisse als JSON zurückgeben
+echo json_encode(['success' => true, 'raceResults' => $raceResults, 'betResults' => $betResults]);
 ?>
