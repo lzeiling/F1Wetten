@@ -14,8 +14,7 @@ $dbname = 'dbs13663781';
 $username = 'dbu2703977';
 $passwordFile = "../pw.txt";
 
-// API-URL
-$apiUrl = "https://ergast.com/api/f1/2024/last/results/";
+$raceNumber = isset($_GET['raceNumber']) ? (int)$_GET['raceNumber'] : 1; // Standardwert 1
 
 // Passwort aus Datei lesen
 if (!file_exists($passwordFile)) {
@@ -48,7 +47,7 @@ try {
         SELECT winnerNum, tenthNum, firstDnfNum, users.nickname
         FROM raceBet
         INNER JOIN users ON raceBet.gamblerSub = users.sub
-        WHERE raceBet.raceNum = 1;
+        WHERE raceBet.raceNum = " . $raceNumber . ";
     ";
 
     $stmt = $pdo->prepare($sql);
@@ -58,7 +57,7 @@ try {
     $betResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (empty($betResults)) {
-        echo json_encode(['message' => 'Keine Daten für raceNum = 1 gefunden.']);
+        echo json_encode(['message' => 'Keine Wettergebnisse für dieses Rennen gefunden.']);
         exit();
     }
 
@@ -73,6 +72,10 @@ try {
 
 // API aufrufen
 try {
+    // API-URL
+    $apiUrl = "https://ergast.com/api/f1/2024/" . $raceNumber . "/results/";
+
+
     $response = file_get_contents($apiUrl);
     if ($response === false) {
         throw new Exception("Fehler beim Abrufen der API-Daten.");

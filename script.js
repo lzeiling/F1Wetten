@@ -12,11 +12,12 @@ let userName = "";
 let userEmail = "";
 let userSub = "";
 
+let pointDistribution = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
 
 document.addEventListener("DOMContentLoaded", function () {
     // Eigenen Button auswählen
     const customLoginButton = document.getElementById("customGoogleLoginButton");
-
+    console.log(pointDistribution);
     // Event-Listener für den Klick hinzufügen
     customLoginButton.addEventListener("click", function () {
         // Google-Login-Prozess starten
@@ -139,22 +140,12 @@ function fillDropdowns() {
     })
 }
 
-function displayEvaluationData(selectedRace) {
-    console.log(selectedRace);
-    const evaluationRaceResult = document.getElementById("evaluationRaceResult");
-    const evaluationBetResult = document.getElementById("evaluationBetResult");
-    evaluationRaceResult.innerHTML =    "<tr>\n" +
-                                        "<th>Position</th>\n" +
-                                        "<th>Fahrer</th>\n" +
-                                        "</tr>";
-    evaluationBetResult.innerHTML = "";
+function getEvaluationData(selectedRace){
+    if (selectedRace !== "wholeSeason") {
+        var betResult;
+        var raceResult;
 
-
-
-
-    if(selectedRace!=="wholeSeason"){
-        var data;
-        fetch('printRaceResults.php')
+        fetch('printRaceResults.php?raceNumber=' + selectedRace)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Fehler beim Laden der Daten.');
@@ -162,31 +153,142 @@ function displayEvaluationData(selectedRace) {
                 return response.json();
             })
             .then(result => {
-                data = result;
-                console.log('Daten:', result);
+                betResult = result.betResults;
+                raceResult = result.raceResults;
+                console.log('Daten:', betResult);
+                console.log('Daten:', raceResult);
+
+                if (result.betResults === undefined) {
+                    alert(result.message);
+                } else {
+                    displayEvaluationData(betResult, raceResult, selectedRace);
+                }
             })
             .catch(error => {
                 console.error('Fehler:', error);
             });
-
-
-        evaluationRaceResult.style.display = "table";
-        evaluationBetResult.style.display = "table";
-
-        const evaluationRaceResultTd1 = document.createElement("td");
-        const evaluationRaceResultTd2 = document.createElement("td");
-
-        evaluationRaceResultTd1.innerHTML = "1.";
-        evaluationRaceResultTd2.innerHTML = "Verstappen";
-
-        const evaluationRaceResultTr =document.createElement("tr");
-        evaluationRaceResultTr.appendChild(evaluationRaceResultTd1);
-        evaluationRaceResultTr.appendChild(evaluationRaceResultTd2);
-        evaluationRaceResult.appendChild(evaluationRaceResultTr);
-    }else{
-        evaluationRaceResult.style.display = "none";
-        evaluationBetResult.style.display = "none";
     }
+}
+
+function displayEvaluationData(betResult, raceResult, selectedRace) {
+    const evaluationRaceResultDiv = document.getElementById("evaluationRaceResultDiv");
+    const evaluationBetResultDiv = document.getElementById("evaluationBetResultDiv");
+
+
+
+    if (selectedRace !== "wholeSeason") {
+        evaluationRaceResultDiv.style.display = "table";
+        evaluationBetResultDiv.style.display = "table";
+
+        evaluationRaceResultDiv.innerHTML = "<tr>\n" +
+            "<th>Position</th>\n" +
+            "<th>Fahrer</th>\n" +
+            "</tr>";
+
+        evaluationBetResultDiv.innerHTML = "<tr>\n" +
+            "<th>Spieler</th>\n" +
+            "<th>Tipp DNF</th>\n" +
+            "<th>Tipp 10ter</th>\n" +
+            "<th>Tipp Sieger</th>\n" +
+            "<th>Punkte</th>\n" +
+            "</tr>";
+
+        calculatePoints(betResult[0].firstDnfNum, betResult[0].tenthNum, raceResult);
+        displayRaceResultTable(evaluationRaceResultDiv, raceResult);
+        displayBetResultTable(evaluationBetResultDiv, raceResult, betResult);
+    } else {
+        evaluationRaceResultDiv.style.display = "none";
+        evaluationBetResultDiv.style.display = "none";
+    }
+}
+
+function displayRaceResultTable(evaluationRaceResultDiv, raceResult) {
+    for (let key in raceResult) {
+    const evaluationRaceResultTd1 = document.createElement("td");
+    const evaluationRaceResultTd2 = document.createElement("td");
+
+    evaluationRaceResultTd1.innerHTML = key + ".";
+    evaluationRaceResultTd2.innerHTML = findDriverNameByNumber(raceResult[key]);
+
+    let evaluationRaceResultTr = document.createElement("tr");
+    evaluationRaceResultTr.appendChild(evaluationRaceResultTd1);
+    evaluationRaceResultTr.appendChild(evaluationRaceResultTd2);
+    evaluationRaceResultDiv.appendChild(evaluationRaceResultTr);
+    }
+}
+
+function displayBetResultTable(evaluationBetResultDiv, raceResult, betResult) {
+
+    for (let key in betResult) {
+        let evaluationBetResultTdPlayer = document.createElement("td");
+        let evaluationBetResultTdDNF = document.createElement("td");
+        let evaluationBetResultTd10th = document.createElement("td");
+        let evaluationBetResultTdWinner = document.createElement("td");
+        let evaluationBetResultTdPoints = document.createElement("td");
+
+        let points = 0;
+        //console.log(key);
+        //console.log(betResult[key]);
+        points = calculatePoints(betResult[key].firstDnfNum, betResult[key].tenthNum, raceResult);
+
+        evaluationBetResultTdPlayer.innerHTML = betResult[key].nickname;
+        evaluationBetResultTdDNF.innerHTML = betResult[key].firstDnfNum;
+        evaluationBetResultTd10th.innerHTML = betResult[key].tenthNum;
+        evaluationBetResultTdWinner.innerHTML = betResult[key].winnerNum;
+        evaluationBetResultTdPoints.innerHTML = points;
+
+        let evaluationBetResultTr = document.createElement("tr");
+        evaluationBetResultTr.appendChild(evaluationBetResultTdPlayer);
+        evaluationBetResultTr.appendChild(evaluationBetResultTdDNF);
+        evaluationBetResultTr.appendChild(evaluationBetResultTd10th);
+        evaluationBetResultTr.appendChild(evaluationBetResultTdWinner);
+        evaluationBetResultTr.appendChild(evaluationBetResultTdPoints);
+
+        evaluationBetResultDiv.appendChild(evaluationBetResultTr);
+    }
+}
+
+function calculatePoints(firstDnfNum, tenthNum, raceResult) {
+    //console.log("FirstDnfNum: ", firstDnfNum);
+    //console.log("TenthNum: ", tenthNum);
+    //console.log("RaceResult: ", raceResult);
+
+    var points = 0;
+    var posOfGuessedTenth;
+
+    // Durchlaufe das raceResult-Objekt
+    for (let key in raceResult) {
+        //console.log(key);
+        //console.log(raceResult[key]);
+
+        // Vergleiche den Wert mit tenthNum
+        if (raceResult[key] === tenthNum) {
+            posOfGuessedTenth = key; // Speichere den Schlüssel (Position)
+            break; // Beende die Schleife, sobald der Wert gefunden wurde
+        }
+    }
+
+    console.log("posOfGuessedTenth: ", posOfGuessedTenth);
+    var distanceFromTenth = Math.abs(10 - posOfGuessedTenth);
+    if (distanceFromTenth < 10) {   //Wenn 11 oder mehr pos. daneben => keine Punkte
+        points += pointDistribution[distanceFromTenth];
+    }
+    console.log("User scored:", points, "points.");
+    return points;
+}
+
+function findDriverNameByNumber(driverNumber) {
+    // Durchlaufe alle Teams
+    for (const team of driverList.teams) {
+        // Durchlaufe alle Fahrer des aktuellen Teams
+        for (const driver of team.drivers) {
+            // Überprüfe, ob die Fahrernummer übereinstimmt
+            if (driver.number === driverNumber) {
+                return driver.name; // Gib den Namen des Fahrers zurück
+            }
+        }
+    }
+    return null; // Gib null zurück, wenn kein Fahrer mit der Nummer gefunden wurde
 }
 
 function addRadioClickListeners() {
@@ -330,7 +432,7 @@ function swapOptionOverlay() {
     if (document.getElementById("optionsOverlay").style.display === "block") {
         document.getElementById("optionsOverlay").style.display = "none";
         document.getElementById("settingsGear").style.display = "block";
-   } else {
+    } else {
         document.getElementById("optionsOverlay").style.display = "block";
         document.getElementById("settingsGear").style.display = "none";
     }
@@ -369,7 +471,7 @@ function changeUsername() {
     var newUserName = document.getElementById("newUsername").value;
     console.log(newUserName);
 
-    var data= {
+    var data = {
         newUsername: newUserName,
         userSub: userSub
     }

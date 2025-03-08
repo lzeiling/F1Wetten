@@ -36,11 +36,11 @@
     <div class="evaluationDiv">
         <img class="closeX" onclick="swapEvaluationOverlay()" src="assets/graphics/close-x.svg" alt="close">
         <h4>Auswertung</h4>
-        <select id="evaluationRaceSelect" onChange="displayEvaluationData(this.value)">
+        <select id="evaluationRaceSelect" onChange="getEvaluationData(this.value)">
             <option value="wholeSeason" selected="selected">Gesamt</option>
         </select>
         <div id="evaluationDivSelectedRace">
-            <table id="evaluationRaceResult">
+            <table id="evaluationRaceResultDiv">
                 <tr>
                     <th>Position</th>
                     <th>Fahrer</th>
@@ -54,7 +54,7 @@
                     <td>Lewis Hamilton</td>
                 </tr>
             </table>
-            <table id="evaluationBetResult" style="margin-top: 10px;">
+            <table id="evaluationBetResultDiv" style="margin-top: 10px;">
                 <tr>
                     <th>Spieler</th>
                     <th>Tipp DNF</th>
