@@ -135,6 +135,8 @@ Button:active {
     height: 30px;
     cursor: pointer;
     z-index: 5;          /* Höher als andere Elemente */
+    /*farbe auf #599bb3 ändern*/
+    filter: invert(57%) sepia(94%) saturate(216%) hue-rotate(150deg) brightness(84%) contrast(85%);
 }
 
 
