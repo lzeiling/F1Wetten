@@ -11,6 +11,7 @@ let currentDate = new Date(); // Erzeugt ein Date-Objekt
 let userName = "";
 let userEmail = "";
 let userSub = "";
+let selectedRaceNum;
 
 let pointDistribution = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
 
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadRaceList();
     loadDriverList();
-    displayEvaluationData("wholeSeason");   //Benötigt da es nur "onchange" aufgerufen wird
+    getEvaluationData("wholeSeason");   //Benötigt da es nur "onchange" aufgerufen wird
 });
 
 // Rest deines Codes bleibt unverändert
@@ -140,7 +141,7 @@ function fillDropdowns() {
     })
 }
 
-function getEvaluationData(selectedRace){
+function getEvaluationData(selectedRace) {
     if (selectedRace !== "wholeSeason") {
         var betResult;
         var raceResult;
@@ -155,8 +156,8 @@ function getEvaluationData(selectedRace){
             .then(result => {
                 betResult = result.betResults;
                 raceResult = result.raceResults;
-                console.log('Daten:', betResult);
-                console.log('Daten:', raceResult);
+                console.log('betResult Daten:', betResult);
+                console.log('raceResult Daten:', raceResult);
 
                 if (result.betResults === undefined) {
                     alert(result.message);
@@ -167,58 +168,79 @@ function getEvaluationData(selectedRace){
             .catch(error => {
                 console.error('Fehler:', error);
             });
-    }
+
+        //Abfragen von Daten von Mitspielern über die ganze Saison
+    }/* else if (selectedRace === "wholeSeason") {
+        var seasonBetResult;
+        fetch('printRaceResults.php?raceNumber=' + selectedRace)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Fehler beim Laden der Daten.');
+                }
+                return response.json();
+            }).then(result => {
+                    betResult = result.betResults;
+                    raceResult = result.raceResults;
+                    console.log('betResult Daten:', betResult);
+                    console.log('raceResult Daten:', raceResult);
+
+                    if (result.betResults === undefined) {
+                        alert(result.message);
+                    } else {
+                        displayEvaluationData(betResult, raceResult, selectedRace);
+                    }
+                })
+                    .catch(error => {
+                        console.error('Fehler:', error);
+                    });
+            }*/
 }
 
 function displayEvaluationData(betResult, raceResult, selectedRace) {
     const evaluationRaceResultDiv = document.getElementById("evaluationRaceResultDiv");
     const evaluationBetResultDiv = document.getElementById("evaluationBetResultDiv");
 
+    evaluationRaceResultDiv.style.display = "table";
+    evaluationBetResultDiv.style.display = "table";
 
+    evaluationRaceResultDiv.innerHTML = "<tr>\n" +
+        "<th>Position</th>\n" +
+        "<th>Fahrer</th>\n" +
+        "</tr>";
 
-    if (selectedRace !== "wholeSeason") {
-        evaluationRaceResultDiv.style.display = "table";
-        evaluationBetResultDiv.style.display = "table";
+    evaluationBetResultDiv.innerHTML = "<tr>\n" +
+        "<th>Spieler</th>\n" +
+        "<th>Tipp DNF</th>\n" +
+        "<th>Tipp 10ter</th>\n" +
+        "<th>Tipp Sieger</th>\n" +
+        "<th>Punkte</th>\n" +
+        "</tr>";
 
-        evaluationRaceResultDiv.innerHTML = "<tr>\n" +
-            "<th>Position</th>\n" +
-            "<th>Fahrer</th>\n" +
-            "</tr>";
-
-        evaluationBetResultDiv.innerHTML = "<tr>\n" +
-            "<th>Spieler</th>\n" +
-            "<th>Tipp DNF</th>\n" +
-            "<th>Tipp 10ter</th>\n" +
-            "<th>Tipp Sieger</th>\n" +
-            "<th>Punkte</th>\n" +
-            "</tr>";
-
-        calculatePoints(betResult[0].firstDnfNum, betResult[0].tenthNum, raceResult);
-        displayRaceResultTable(evaluationRaceResultDiv, raceResult);
-        displayBetResultTable(evaluationBetResultDiv, raceResult, betResult);
-    } else {
-        evaluationRaceResultDiv.style.display = "none";
-        evaluationBetResultDiv.style.display = "none";
-    }
+    calculatePoints(betResult[0].firstDnfNum, betResult[0].tenthNum, raceResult);
+    displayRaceResultTable(evaluationRaceResultDiv, raceResult);
+    displayBetResultTable(evaluationBetResultDiv, raceResult, betResult);
 }
+
+/*function displaySeasonBetResult(seasonBetResult) {
+
+}*/
 
 function displayRaceResultTable(evaluationRaceResultDiv, raceResult) {
     for (let key in raceResult) {
-    const evaluationRaceResultTd1 = document.createElement("td");
-    const evaluationRaceResultTd2 = document.createElement("td");
+        const evaluationRaceResultTd1 = document.createElement("td");
+        const evaluationRaceResultTd2 = document.createElement("td");
 
-    evaluationRaceResultTd1.innerHTML = key + ".";
-    evaluationRaceResultTd2.innerHTML = findDriverNameByNumber(raceResult[key]);
+        evaluationRaceResultTd1.innerHTML = raceResult[key].finishPosition + ".";
+        evaluationRaceResultTd2.innerHTML = findDriverNameByNumber(raceResult[key].driverNum);
 
-    let evaluationRaceResultTr = document.createElement("tr");
-    evaluationRaceResultTr.appendChild(evaluationRaceResultTd1);
-    evaluationRaceResultTr.appendChild(evaluationRaceResultTd2);
-    evaluationRaceResultDiv.appendChild(evaluationRaceResultTr);
+        let evaluationRaceResultTr = document.createElement("tr");
+        evaluationRaceResultTr.appendChild(evaluationRaceResultTd1);
+        evaluationRaceResultTr.appendChild(evaluationRaceResultTd2);
+        evaluationRaceResultDiv.appendChild(evaluationRaceResultTr);
     }
 }
 
 function displayBetResultTable(evaluationBetResultDiv, raceResult, betResult) {
-
     for (let key in betResult) {
         let evaluationBetResultTdPlayer = document.createElement("td");
         let evaluationBetResultTdDNF = document.createElement("td");
@@ -232,9 +254,9 @@ function displayBetResultTable(evaluationBetResultDiv, raceResult, betResult) {
         points = calculatePoints(betResult[key].firstDnfNum, betResult[key].tenthNum, raceResult);
 
         evaluationBetResultTdPlayer.innerHTML = betResult[key].nickname;
-        evaluationBetResultTdDNF.innerHTML = betResult[key].firstDnfNum;
-        evaluationBetResultTd10th.innerHTML = betResult[key].tenthNum;
-        evaluationBetResultTdWinner.innerHTML = betResult[key].winnerNum;
+        evaluationBetResultTdDNF.innerHTML = findDriverNameByNumber(betResult[key].firstDnfNum);
+        evaluationBetResultTd10th.innerHTML = findDriverNameByNumber(betResult[key].tenthNum);
+        evaluationBetResultTdWinner.innerHTML = findDriverNameByNumber(betResult[key].winnerNum);
         evaluationBetResultTdPoints.innerHTML = points;
 
         let evaluationBetResultTr = document.createElement("tr");
@@ -249,31 +271,27 @@ function displayBetResultTable(evaluationBetResultDiv, raceResult, betResult) {
 }
 
 function calculatePoints(firstDnfNum, tenthNum, raceResult) {
-    //console.log("FirstDnfNum: ", firstDnfNum);
-    //console.log("TenthNum: ", tenthNum);
-    //console.log("RaceResult: ", raceResult);
-
     var points = 0;
     var posOfGuessedTenth;
 
     // Durchlaufe das raceResult-Objekt
     for (let key in raceResult) {
-        //console.log(key);
-        //console.log(raceResult[key]);
-
         // Vergleiche den Wert mit tenthNum
-        if (raceResult[key] === tenthNum) {
-            posOfGuessedTenth = key; // Speichere den Schlüssel (Position)
+        if (raceResult[key].driverNum === tenthNum) {
+            posOfGuessedTenth = raceResult[key].finishPosition; // Speichere die Position
             break; // Beende die Schleife, sobald der Wert gefunden wurde
         }
     }
 
-    console.log("posOfGuessedTenth: ", posOfGuessedTenth);
     var distanceFromTenth = Math.abs(10 - posOfGuessedTenth);
-    if (distanceFromTenth < 10) {   //Wenn 11 oder mehr pos. daneben => keine Punkte
+    if (distanceFromTenth < 10) {   //Wenn 11 oder mehr pos. daneben → keine Punkte
         points += pointDistribution[distanceFromTenth];
     }
-    console.log("User scored:", points, "points.");
+
+    if (firstDnfNum === getDriverNumWithFirstDnf(raceResult)) {     //Wenn der Fahrer mit dem ersten DNF erraten wurde +10Pts.
+        points += 10;
+    }
+
     return points;
 }
 
@@ -288,7 +306,17 @@ function findDriverNameByNumber(driverNumber) {
             }
         }
     }
-    return null; // Gib null zurück, wenn kein Fahrer mit der Nummer gefunden wurde
+    return driverNumber; // Gib Fahrernummer zurück, wenn kein Fahrer mit der Nummer gefunden wurde
+}
+
+function getDriverNumWithFirstDnf(drivers) {
+    // Durchlaufe das Array der Fahrer
+    for (let i = 0; i < drivers.length; i++) {
+        if (drivers[i].dnfFirst === 1) {
+            return drivers[i].driverNum;
+        }
+    }
+    return null; // Falls kein Fahrer mit dnfFirst = 1 gefunden wird
 }
 
 function addRadioClickListeners() {
@@ -313,14 +341,15 @@ function addRadioClickListeners() {
             radioButton.click();
         });
     });
-
-
 }
 
 // Funktion, die bei jedem Klick auf einen Radiobutton ausgeführt wird
 function handleRadioClick(radioButton) {
     //console.log(`Radio-Button mit Wert "${radioButton.value}" wurde gewählt.`);
     //console.log(raceList.races[radioButton.value - 1].country);
+
+    selectedRaceNum = radioButton.value;
+
     let raceDayDate = new Date(raceList.races[radioButton.value - 1].endDate);
 
     document.getElementById('raceCountry').innerText = raceList.races[radioButton.value - 1].country;
@@ -348,7 +377,17 @@ function preSelectUpcomingRace() {
 }
 
 function collectBetData() {
-    if (userSub !== "") {
+    const selectedRace = raceList.races[selectedRaceNum - 1];
+    // Erstelle ein Date-Objekt für die Startzeit des Rennens
+    const raceStartTime = new Date(`${selectedRace.startDate}T${selectedRace.start_time}:00`);
+    // Erstelle ein Date-Objekt für die aktuelle Zeit
+    const currentTime = new Date();
+    // Prüfe, ob die aktuelle Zeit vor der Startzeit des Rennens liegt
+    const hasRaceNotStarted = currentTime > raceStartTime;
+
+    console.log(hasRaceNotStarted); // true, wenn das Rennen noch nicht begonnen hat, sonst false
+    if (userSub !== "" && hasRaceNotStarted) {
+
         const data = {
             raceNum: document.querySelector('input[name="chosenRace"]:checked').value,
             winnerNum: selectBetRaceWinner.value,
@@ -358,6 +397,8 @@ function collectBetData() {
         };
         console.log(data);
         sendRaceBetData(data);
+    } else if (!hasRaceNotStarted) {
+        alert("Rennen hat bereits begonnen!");
     } else {
         alert("Bitte zuerst anmelden und Benutzernamen festlegen!");
     }

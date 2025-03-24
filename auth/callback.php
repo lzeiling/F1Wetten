@@ -30,11 +30,13 @@ try {
 
     // Nutzer-Session setzen
     $_SESSION['user_sub'] = $payload['sub'];
+    $email = $payload['email'] ?? null; // Falls vorhanden
 
     // Datenbankverbindungsdetails
     $host = 'db5016947436.hosting-data.io';
     $dbname = 'dbs13663781';
     $dbUsername = 'dbu2703977';
+
 
     // Passwort sicher aus Datei lesen
     $pw_file_path = realpath(__DIR__ . "/../../pw.txt");
@@ -50,13 +52,17 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]);
 
-    // Nutzer in die Datenbank einfügen (doppelte Werte ignorieren)
-    $sql = "INSERT IGNORE INTO users (sub) VALUES (:sub)";
+    // Nutzer in die Datenbank einfügen oder Email aktualisieren
+    $sql = "INSERT INTO users (sub, email) VALUES (:sub, :email)
+            ON DUPLICATE KEY UPDATE email = VALUES(email)";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([':sub' => $_SESSION['user_sub']]);
+    $stmt->execute([
+        ':sub' => $_SESSION['user_sub'],
+        ':email' => $email
+    ]);
 
     // Nutzername aus der Datenbank abrufen
-    $sql = "SELECT nickname FROM `users` WHERE sub = (:sub)";
+    $sql = "SELECT nickname FROM users WHERE sub = :sub";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':sub' => $_SESSION['user_sub']]);
 
@@ -69,7 +75,7 @@ try {
         'success' => true,
         'sub' => $_SESSION['user_sub'],
         'username' => $username,
-        'email' => $payload['email']
+        'email' => $email
     ]);
 
 } catch (Exception $e) {

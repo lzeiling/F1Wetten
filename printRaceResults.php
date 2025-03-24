@@ -71,10 +71,11 @@ if($raceNumber >= 0){
     }
 
 
+/*
     // API aufrufen
     try {
         // API-URL
-        $apiUrl = "https://ergast.com/api/f1/2024/" . $raceNumber . "/results/";
+        $apiUrl = "https://ergast.com/api/f1/2025/" . $raceNumber . "/results/";
 
 
         $response = file_get_contents($apiUrl);
@@ -91,19 +92,25 @@ if($raceNumber >= 0){
         // Array zum Speichern der Endpositionen
         $raceResults = [];
 
-        // Ergebnisse verarbeiten
-        foreach ($xml->RaceTable->Race->ResultsList->Result as $result) {
-            // Fahrernummer (permanentNumber) extrahieren
-            $driverNumber = (int)$result->Driver->PermanentNumber;
-            $position = (int)$result['position'];
+        if($xml->RaceTable){
 
-            if($driverNumber == 33){
-                $driverNumber = 1;  //Max verstappen DriverNumber changed to 1
-            }
-
-            // Endposition unter der Fahrernummer speichern
-            $raceResults[$position] = $driverNumber;
         }
+        // Ergebnisse verarbeiten
+        if (!empty($xml->RaceTable->Race->ResultsList->Result)) {
+            foreach ($xml->RaceTable->Race->ResultsList->Result as $result) {
+                // Fahrernummer (permanentNumber) extrahieren
+                $driverNumber = isset($result->Driver->PermanentNumber) ? (int)$result->Driver->PermanentNumber : 0;
+                $position = isset($result['position']) ? (int)$result['position'] : 0;
+
+                if ($driverNumber == 33) {
+                    $driverNumber = 1;  // Max Verstappen DriverNumber changed to 1
+                }
+
+                // Endposition unter der Fahrernummer speichern
+                $raceResults[$position] = $driverNumber;
+            }
+        }
+
 
     } catch (Exception $e) {
         error_log("API-Fehler: " . $e->getMessage());
@@ -112,6 +119,30 @@ if($raceNumber >= 0){
     }
     // Ergebnisse als JSON zurückgeben
     echo json_encode(['success' => true, 'raceResults' => $raceResults, 'betResults' => $betResults]);
+    */
+    try {
+            $sql = "SELECT `driverNum`,`finishPosition`,`dnfFirst` FROM `raceResults` WHERE raceNum =" . $raceNumber ." ORDER BY `raceResults`.`finishPosition` ASC";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+
+            // Ergebnisse abrufen
+            $raceResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($raceResults)) {
+                echo json_encode(['message' => 'Keine Rennergebnisse für dieses Rennen gefunden.']);
+                exit();
+            }
+
+            // Ergebnisse als JSON zurückgeben
+            //echo json_encode(['success' => true, 'data' => $raceResults]);
+        } catch (PDOException $e) {
+            error_log("SQL-Fehler: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'Fehler bei der Datenbankabfrage: ' . $e->getMessage()]);
+        }
+
+        echo json_encode(['success' => true, 'raceResults' => $raceResults, 'betResults' => $betResults]);
 }else{
     //Gesamtwertung erstellen
 
